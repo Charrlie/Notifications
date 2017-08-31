@@ -1,0 +1,5 @@
+name: Notifications
+description: Get notified!
+version: 1.0
+author: Vanishedd
+main: com.vanishedd.notifications.Notifications
