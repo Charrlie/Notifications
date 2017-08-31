@@ -24,32 +24,31 @@ public class PlayerActivity implements Listener {
                 continue;
             }
 
-            Player mentioned = Bukkit.getPlayer(stripped);
-
-            if (mentioned == null) {
-                continue;
-            }
-
             for (Player player : Bukkit.getOnlinePlayers()) {
                 if (!player.getName().equalsIgnoreCase(stripped)) {
                     continue;
                 }
 
-                if (message.equalsIgnoreCase(player.getName())) {
-                    String fullMessage = String.format(e.getFormat(), e.getPlayer().getDisplayName(), e.getMessage().replace(word, ChatColor.AQUA + mentioned.getName()));
-
-                    e.getRecipients().remove(player);
-                    player.sendMessage(fullMessage);
-                    mentioned.playSound(mentioned.getLocation(), Sound.valueOf(plugin.getConfig().getString("Sound", "ANVIL_BREAK").toUpperCase()), 1, 1);
+                if (player == e.getPlayer()) {
                     return;
                 }
 
-                String lastColor = ChatColor.getLastColors(e.getMessage().split(word)[0]);
-                String fullMessage = String.format(e.getFormat(), e.getPlayer().getDisplayName(), e.getMessage().replace(word, ChatColor.AQUA + mentioned.getName() + lastColor));
+                if (message.equalsIgnoreCase(player.getName())) {
+                    String fullMessage = String.format(e.getFormat(), e.getPlayer().getDisplayName(), e.getMessage().replace(word, ChatColor.AQUA + player.getName()));
+
+                    e.getRecipients().remove(player);
+                    player.sendMessage(fullMessage);
+                    player.playSound(player.getLocation(), Sound.valueOf(plugin.getConfig().getString("Sound", "ANVIL_BREAK").toUpperCase()), 1, 1);
+                    return;
+                }
+
+                String fullMessage = String.format(e.getFormat(), e.getPlayer().getDisplayName(), e.getMessage());
+                String lastColor = ChatColor.getLastColors(fullMessage.split(word)[0]);
+                String coloredMessage = fullMessage.replace(word, ChatColor.AQUA + player.getName() + lastColor);
 
                 e.getRecipients().remove(player);
-                player.sendMessage(fullMessage);
-                mentioned.playSound(mentioned.getLocation(), Sound.valueOf(plugin.getConfig().getString("Sound", "ANVIL_BREAK").toUpperCase()), 1, 1);
+                player.sendMessage(coloredMessage);
+                player.playSound(player.getLocation(), Sound.valueOf(plugin.getConfig().getString("Sound", "ANVIL_BREAK").toUpperCase()), 1, 1);
                 return;
             }
         }
